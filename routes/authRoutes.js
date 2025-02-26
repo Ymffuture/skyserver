@@ -11,6 +11,7 @@ const JWT_SECRET = process.env.SECRET_ACCESS_KEY;
 // Register Route
 router.post("/user-home-page/sign-up", async (req, res) => {
   const { email, password } = req.body;
+  
   const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{6,16}$/; 
   const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; 
 

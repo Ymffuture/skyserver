@@ -1,8 +1,8 @@
-POST http://localhost:5000/signin 
+POST http://localhost:7411/api/auth/user-home-page/sign-in
 Content-Type: application/json
 
 {
    
-    "email": "futurekgomotso@gmail.com",
-    "password": "Future03$"
+    "email": "futurekgoo@gmail.com",
+    "password": "qweQWE23@"
 }
