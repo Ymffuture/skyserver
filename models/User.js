@@ -4,8 +4,11 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  resetPasswordToken:String,
-  resetPasswordExpires:Date,
+  googleId: { type: String, unique: true },
+    name: String,
+    avatar: String,
+    resetPasswordToken:String,
+    resetPasswordExpires:Date,
 });
 
 // Hash password before saving
@@ -17,7 +20,6 @@ userSchema.pre("save", async function (next) {
     }catch(error){
         next(error)
     }
-
 }
 );
 const User = mongoose.model("User", userSchema)
