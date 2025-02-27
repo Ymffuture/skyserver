@@ -14,7 +14,7 @@ const app = express();
 const PORT = process.env.VITE_SERVER_PORT || process.env.VITE_SERVER_PORT_BACKUP;
 
 // Middleware
-app.use(cors());
+app.use(cors({origin:"https://skyfordcci.vercel.app", credential:true}));
 app.use(bodyParser.json());
 
 // MongoDB Connection
@@ -39,7 +39,7 @@ app.get('/server/api/data', (req,res)=>{
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  
+
 });
 
 
