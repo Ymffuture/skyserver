@@ -3,30 +3,27 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import dotenv from "dotenv";
-import {forgotPassword , resetPassword} from '../control/Controller.js'
-const router = express.Router();
-dotenv.config();
-const JWT_SECRET = process.env.SECRET_ACCESS_KEY;
+import { forgotPassword } from "../control/Controller.js";
 
-// Register Route
+dotenv.config();
+const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET_KEY;
+
+
 router.post("/user-home-page/sign-up", async (req, res) => {
   const { email, password } = req.body;
+
+
+  const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(403).json({ error: "Invalid email format" });
+  }
+
   
-  const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{6,16}$/; 
-  const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; 
-
-if (!emailRegex.test(email)) {
-    return res.status(403).json({ error: `Invalid email Address` });
-}
-
-
-if (!passwordRegex.test(password)) {
-    return res.status(403).json({ error: 'Password must contain ONE uppercase,lowercase,number,and special character, and minimum of 7 characters long.' });
-}
-
-if (!email.length) {
-    return res.status(403).json({ error: 'Email must be at least 3 letters long' });
-}
+  const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.*\s).{8,20}$/;
+  if (!passwordRegex.test(password)) {
+    return res.status(403).json({ error: "Password must be 8-20 characters, contain uppercase, lowercase, number, and special character" });
+  }
 
   try {
     // Check if user already exists
@@ -41,14 +38,13 @@ if (!email.length) {
 
     res.status(201).json({ message: "Registered successfully" });
   } catch (error) {
-    res.status(500).json({ error: ":::Can not register please check the internet connection", details: error.message });
+    res.status(500).json({ error: "Registration error", details: error.message });
   }
 });
 
-// Login Route
+// 🔹 Login User
 router.post("/user-home-page/sign-in", async (req, res) => {
   const { email, password } = req.body;
-
   try {
     // Find user by email
     const user = await User.findOne({ email });
@@ -62,27 +58,17 @@ router.post("/user-home-page/sign-in", async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
-    // Generate token
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
+    // Generate JWT Token
+    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "2h" });
 
     res.status(200).json({ message: "Login successful", token });
   } catch (error) {
-    res.status(500).json({ error: "Our server is currently offline, please wait a moment while we fix the error", details: error.message });
+    res.status(500).json({ error: "Login error", details: error.message });
   }
 });
-// recovery password Route..
-router.post("/user-home-page/recover-password-getcode-page", async (req, res) => {
-  const { email } = req.body;
-  
-  const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; 
 
-  if (!emailRegex.test(email)) {
-    return res.status(403).json({ error: `Invalid email::403 ` });
-}
-});
-
-router.post('/forgot-password',forgotPassword);
-router.post('/reset-password/:token',resetPassword);
+// 🔹 Password Recovery Routes
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password/:token");
 
 export default router;
-
