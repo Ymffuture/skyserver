@@ -6,54 +6,44 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// Function to generate a secure token hash
+const generateResetToken = () => {
+    const token = crypto.randomBytes(32).toString('hex'); // Generate token
+    const hash = crypto.createHash('sha256').update(token).digest('hex'); // Hash token
+    return { token, hash };
+};
+
 // Send password reset email
 export const forgotPassword = async (req, res) => {
     const { email } = req.body;
     const user = await User.findOne({ email });
 
-    if (!user) return res.status(400).json({ message: 'User not found' });
+    if (!user) return res.status(400).json({ message: 'Email not found, please register.' });
 
-    // Generate reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour validity
+    // Generate and hash reset token
+    const { token, hash } = generateResetToken();
+    user.resetPasswordToken = hash; // Store the hashed token in the DB
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour expiration
     await user.save();
 
-    // Send email with reset link
+    // Secure Email Transport
     const transporter = nodemailer.createTransport({
         service: 'Gmail',
-        auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS, // ⚠️ Consider using OAuth2 for security
+        },
     });
 
-    const resetLink = `https://skyfordcci.vercel.app/reset-password/${resetToken}`;
-    
+    const resetLink = `${process.env.VITE_FRONTEND_DOMAIN_URL_HTTP}/reset-password/${token}`;
+
     await transporter.sendMail({
         to: email,
         subject: 'Password Reset',
-        text: `Click the link to reset your password: ${resetLink}`,
+        html: `<p>Click the link below to reset your password:</p>
+               <a href="${resetLink}">${resetLink}</a>
+               <p>This link is valid for 1 hour.</p>`,
     });
 
     res.json({ message: 'Password reset email sent' });
 };
-
-// Reset password with token
-export const resetPassword = async (req, res) => {
-    const { token } = req.params;
-    const { newPassword } = req.body;
-    
-    const user = await User.findOne({ 
-        resetPasswordToken: token, 
-        resetPasswordExpires: { $gt: Date.now() }
-    });
-
-    if (!user) return res.status(400).json({ message: 'Invalid or expired token' });
-
-    // Update password
-    user.password = await bcrypt.hash(newPassword, 10);
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-    await user.save();
-
-    res.json({ message: 'Password successfully reset' });
-};
-
