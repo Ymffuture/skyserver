@@ -35,7 +35,7 @@ export const forgotPassword = async (req, res) => {
         },
     });
 
-    const resetLink = `${process.env.VITE_FRONTEND_DOMAIN_URL_HTTP}/reset-password/${token}`;
+    const resetLink = `${process.env.VITE_FRONTEND_DOMAIN_URL_HTTPS}/reset-password/${token}`;
 
     await transporter.sendMail({
         to: email,
