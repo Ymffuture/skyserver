@@ -12,7 +12,7 @@ const app = express();
 
 // Enable CORS
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173', // adjust as needed
+  origin: process.env.VITE_FRONTEND_DOMAIN_URL_HTTPS || 'http://localhost:5173', // adjust as needed
   credentials: true, // allows cookies (for sessions)
 }));
 
