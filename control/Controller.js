@@ -6,44 +6,54 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Function to generate a secure token hash
 const generateResetToken = () => {
-    const token = crypto.randomBytes(32).toString('hex'); // Generate token
-    const hash = crypto.createHash('sha256').update(token).digest('hex'); // Hash token
+    const token = crypto.randomBytes(32).toString('hex');
+    const hash = crypto.createHash('sha256').update(token).digest('hex');
     return { token, hash };
 };
 
-// Send password reset email
 export const forgotPassword = async (req, res) => {
-    const { email } = req.body;
-    const user = await User.findOne({ email });
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
 
-    if (!user) return res.status(400).json({ message: 'Email not found, please register.' });
+        if (!user) return res.status(400).json({ message: 'Email not found.' });
 
-    // Generate and hash reset token
-    const { token, hash } = generateResetToken();
-    user.resetPasswordToken = hash; // Store the hashed token in the DB
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour expiration
-    await user.save();
+        const { token, hash } = generateResetToken();
+        user.resetPasswordToken = hash;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+        await user.save();
 
-    // Secure Email Transport
-    const transporter = nodemailer.createTransport({
-        service: 'Gmail',
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS, // ⚠️ Consider using OAuth2 for security
-        },
-    });
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+        });
 
-    const resetLink = `${process.env.VITE_FRONTEND_DOMAIN_URL_HTTPS}/reset-password/${token}`;
+        // Optional: verify transporter
+        await transporter.verify();
 
-    await transporter.sendMail({
-        to: email,
-        subject: 'Password Reset',
-        html: `<p>Click the link below to reset your password:</p>
-               <a href="${resetLink}">${resetLink}</a>
-               <p>This link is valid for 1 hour.</p>`,
-    });
+        const resetLink = `${process.env.VITE_FRONTEND_DOMAIN_URL_HTTPS}/reset-password/${token}`;
 
-    res.json({ message: 'Password reset email sent' });
+        const mailOptions = {
+            to: email,
+            subject: 'Password Reset Request',
+            html: `
+                <h2>Password Reset</h2>
+                <p>Click below to reset your password. This link is valid for 1 hour.</p>
+                <a href="${resetLink}" target="_blank" style="padding: 10px 15px; background-color: #1E90FF; color: white; text-decoration: none; border-radius: 5px;">Reset Password</a>
+                <p>If you did not request this, you can ignore this email.</p>
+            `,
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.json({ message: 'Password reset email sent successfully' });
+
+    } catch (error) {
+        console.error('Error in forgotPassword:', error);
+        res.status(500).json({ message: 'Server error. Could not send email.' });
+    }
 };
