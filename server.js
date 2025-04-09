@@ -2,12 +2,19 @@ import express from 'express';
 import mongoose from 'mongoose';
 import session from 'express-session';
 import passport from 'passport';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import './config/passport.js';
 
 dotenv.config();
 
 const app = express();
+
+// Enable CORS
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:5173', // adjust as needed
+  credentials: true, // allows cookies (for sessions)
+}));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
@@ -23,6 +30,10 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    secure: false, // set to true in production with HTTPS
+    sameSite: 'lax', // or 'none' if using secure:true
+  }
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -39,23 +50,20 @@ app.get('/auth/google',
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    // Successful authentication
-    res.redirect('/dashboard');
+    res.redirect(`${process.env.CLIENT_URL}/dashboard`); // redirect to frontend
   }
 );
 
 app.get('/dashboard', (req, res) => {
   if (!req.isAuthenticated()) {
-    return res.redirect('/');
+    return res.status(401).send('Not authenticated');
   }
   res.send(`Welcome, ${req.user.displayName}`);
 });
 
-app.get('/logout', (req, res) => {
+app.get('/logout', (req, res, next) => {
   req.logout(err => {
-    if (err) {
-      return next(err);
-    }
+    if (err) return next(err);
     res.redirect('/');
   });
 });
