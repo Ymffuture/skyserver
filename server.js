@@ -19,7 +19,7 @@ if (!process.env.MONGO_URI || !process.env.VITE_SERVER_PORT) {
 }
 
 // ✅ Middleware
-app.use(cors({ origin: process.env.VITE_FRONTEND_DOMAIN_URL_HTTP, credentials: true }));
+app.use(cors({ origin: process.env.VITE_FRONTEND_DOMAIN_URL_HTTPS, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
