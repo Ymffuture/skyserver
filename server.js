@@ -50,11 +50,11 @@ app.get('/auth/google',
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect(`${process.env.CLIENT_URL}/dashboard`); // redirect to frontend
+    res.redirect(`${process.env.VITE_FRONTEND_DOMAIN_URL_HTTPS}/`); // redirect to frontend
   }
 );
 
-app.get('/dashboard', (req, res) => {
+app.get('/', (req, res) => {
   if (!req.isAuthenticated()) {
     return res.status(401).send('Not authenticated');
   }
