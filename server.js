@@ -48,7 +48,7 @@ app.use(passport.session());
 app.use("/api/auth", authRoutes);
 
 app.get('/', (req, res) => {
-  res.json({ message: "SKYFORDCCI: Server Home", status: "OK", documentation: "/server/api/data" });
+  res.json({ message: "Quorvex:Home page ", status: "OK", documentation: "/server/api/data" });
 });
 
 app.get('/server/api/data', (req, res) => {
