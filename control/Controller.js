@@ -39,20 +39,43 @@ export const forgotPassword = async (req, res) => {
         const resetLink = `${process.env.VITE_FRONTEND_DOMAIN_URL_HTTPS}/reset-password/${token}`;
 
         const mailOptions = {
-            to: email,
-            subject: 'Password Reset Request',
-            html: `
-                <div style="font-family: Arial, sans-serif;">
-                    <h2>Password Reset</h2>
-                    <p>Click the button below to reset your password. This link is valid for <strong>1 hour</strong>.</p>
-                    <a href="${resetLink}" target="_blank" 
-                       style="padding: 10px 20px; background-color: #1E90FF; color: white; text-decoration: none; border-radius: 5px;">
-                        Reset Password
-                    </a>
-                    <p style="margin-top: 20px;">If you did not request this, you can safely ignore this email.</p>
-                </div>
-            `,
-        };
+  to: email,
+  subject: 'Reset Your Password - Action Required',
+  html: `
+    <div style="font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; background-color: #f0f8ff; padding: 20px;">
+      <table width="100%" style="max-width: 600px; margin: auto; background: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;">
+        <tr>
+          <td style="background-color: #1E90FF; padding: 20px; text-align: center; color: white;">
+            <h2 style="margin: 0;">Password Reset Request</h2>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 30px; color: #333;">
+            <p style="font-size: 16px;">Hi there,</p>
+            <p style="font-size: 16px;">We received a request to reset your password. Click the button below to proceed. This link will expire in <strong>1 hour</strong>.</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetLink}" target="_blank"
+                 style="padding: 12px 25px; background-color: #1E90FF; color: white; font-weight: bold; border-radius: 6px; text-decoration: none; display: inline-block;">
+                Reset My Password
+              </a>
+            </div>
+            <p style="font-size: 14px;">If the button doesn't work, copy and paste the following link into your browser:</p>
+            <p style="font-size: 13px; word-break: break-all;"><a href="${resetLink}" target="_blank" style="color: #1E90FF;">${resetLink}</a></p>
+            <hr style="margin: 30px 0;" />
+            <p style="font-size: 12px; color: #888;">If you didn't request this, please ignore this message or contact support.</p>
+            <p style="font-size: 12px; color: #888;">Thank you,<br/>The Quorvex Team</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background-color: #f4f4f4; text-align: center; padding: 15px; font-size: 12px; color: #666;">
+            &copy; ${new Date().getFullYear()} Quorvex. All rights reserved.
+          </td>
+        </tr>
+      </table>
+    </div>
+  `,
+};
+
 
         await transporter.sendMail(mailOptions);
 
