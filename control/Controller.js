@@ -23,7 +23,8 @@ export const forgotPassword = async (req, res) => {
 
         const { token, hash } = generateResetToken();
         user.resetPasswordToken = hash;
-        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour expiry
+        user.resetPasswordExpires = Date.now() + 300000; // 5 minutes in milliseconds
+ // 1 hour expiry
         await user.save();
 
         const transporter = nodemailer.createTransport({
@@ -52,7 +53,7 @@ export const forgotPassword = async (req, res) => {
         <tr>
           <td style="padding: 30px; color: #333;">
             <p style="font-size: 16px;">Hi there,</p>
-            <p style="font-size: 16px;">We received a request to reset your password. Click the button below to proceed. This link will expire in <strong>1 hour</strong>.</p>
+            <p style="font-size: 16px;">We received a request to reset your password. Click the button below to proceed. This link will expire in <strong>5 min</strong>.</p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="${resetLink}" target="_blank"
                  style="padding: 12px 25px; background-color: #1E90FF; color: white; font-weight: bold; border-radius: 6px; text-decoration: none; display: inline-block;">
