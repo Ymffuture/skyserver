@@ -103,14 +103,14 @@ export const resetPassword = async (req, res) => {
             return res.status(400).json({ message: 'Invalid or expired token' });
         }
 
-        const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.*\s).{8,20}$/;
+        const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.*\s).{6,16}$/;
         if (!passwordRegex.test(password)) {
             return res.status(400).json({
-                message: 'Password must be 8-20 characters, include uppercase, lowercase, number, and special character',
+                message: 'Password must be 6-16 characters, include uppercase, lowercase, number, and special character',
             });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 12);
+        const hashedPassword = await bcrypt.hash(password, 15);
         user.password = hashedPassword;
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
