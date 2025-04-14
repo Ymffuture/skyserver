@@ -45,6 +45,11 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
+// subscription page
+const Subscriber = mongoose.model('Subscriber', new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  subscribedAt: { type: Date, default: Date.now },
+}));
 
 const User = mongoose.model("User", userSchema);
 
