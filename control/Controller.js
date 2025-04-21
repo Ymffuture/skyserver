@@ -43,39 +43,48 @@ export const forgotPassword = async (req, res) => {
   to: email,
   subject: 'Reset Your Password - Action Required',
   html: `
-    <div style="font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; background-color: #f0f8ff; padding: 20px;">
-      <table width="100%" style="max-width: 600px; margin: auto; background: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05); overflow: hidden;">
+    <div style="font-family: 'Roboto', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; background-color: #f0f8ff; padding: 20px;">
+      <table width="100%" style="max-width: 600px; margin: auto; background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden;">
         <tr>
-          <td style="background-color: #1E90FF; padding: 20px; text-align: center; color: white;">
-            <h2 style="margin: 0;">Password Reset Request</h2>
+          <td style="background-color: #1E90FF; padding: 20px; text-align: center;">
+            <img src="https://quorvexinstitute.vercel.app/img/Logo.jpg" alt="Quorvex Logo" style="height: 50px; margin-bottom: 10px;" />
+            <h2 style="margin: 0; color: white;">Password Reset Request</h2>
           </td>
         </tr>
         <tr>
           <td style="padding: 30px; color: #333;">
             <p style="font-size: 16px;">Hi there,</p>
-            <p style="font-size: 16px;">We received a request to reset your password. Click the button below to proceed. This link will expire in <strong>5 min</strong>.</p>
+            <p style="font-size: 16px;">We received a request to reset your password. Click the button below to proceed. This link will expire in <strong>5 minutes</strong>.</p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="${resetLink}" target="_blank"
-                 style="padding: 12px 25px; background-color: #1E90FF; color: white; font-weight: bold; border-radius: 6px; text-decoration: none; display: inline-block;">
+                 style="padding: 12px 30px; background-color: #1E90FF; color: white; font-weight: bold; border-radius: 6px; text-decoration: none;">
                 Reset My Password
               </a>
             </div>
-            <p style="font-size: 14px;">If the button doesn't work, copy and paste the following link into your browser:</p>
-            <p style="font-size: 13px; word-break: break-all;"><a href="${resetLink}" target="_blank" style="color: #1E90FF;">${resetLink}</a></p>
+            <p style="font-size: 14px;">If the button doesn't work, copy and paste this link into your browser:</p>
+            <p style="font-size: 13px; word-break: break-word;"><a href="${resetLink}" target="_blank" style="color: #1E90FF;">${resetLink}</a></p>
             <hr style="margin: 30px 0;" />
-            <p style="font-size: 12px; color: #888;">If you didn't request this, please ignore this message or contact support.</p>
-            <p style="font-size: 12px; color: #888;">Thank you,<br/>The Quorvex Team</p>
+            <p style="font-size: 12px; color: #888;">If you didn’t request this, please ignore this email or contact support.</p>
+            <p style="font-size: 12px; color: #888;">Thanks,<br/>The Quorvex Team</p>
           </td>
         </tr>
         <tr>
-          <td style="background-color: #f4f4f4; text-align: center; padding: 15px; font-size: 12px; color: #666;">
-            &copy; ${new Date().getFullYear()} Quorvex. All rights reserved.
+          <td style="background-color: #f4f4f4; padding: 20px; text-align: center; font-size: 12px; color: #666;">
+            <p style="margin: 0 0 10px;">Follow us on</p>
+            <div style="margin-bottom: 10px;">
+              <a href="https://linkedin.com" style="margin: 0 8px;"><img src="https://cdn-icons-png.flaticon.com/24/174/174857.png" alt="LinkedIn" /></a>
+              <a href="https://facebook.com" style="margin: 0 8px;"><img src="https://cdn-icons-png.flaticon.com/24/145/145802.png" alt="Facebook" /></a>
+              <a href="https://twitter.com" style="margin: 0 8px;"><img src="https://cdn-icons-png.flaticon.com/24/733/733579.png" alt="Twitter" /></a>
+              <a href="https://instagram.com" style="margin: 0 8px;"><img src="https://cdn-icons-png.flaticon.com/24/2111/2111463.png" alt="Instagram" /></a>
+            </div>
+            <p style="margin: 0;">&copy; ${new Date().getFullYear()} Quorvex. All rights reserved.</p>
           </td>
         </tr>
       </table>
     </div>
   `,
 };
+
 
 
         await transporter.sendMail(mailOptions);
