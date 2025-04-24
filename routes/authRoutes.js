@@ -10,7 +10,7 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 
 router.post("/user-home-page/sign-up", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password , fname } = req.body;
 
   const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (!emailRegex.test(email)) {
