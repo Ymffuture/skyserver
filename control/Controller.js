@@ -18,7 +18,8 @@ export const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select('name email');
+
         if (!user) return res.status(400).json({ message: 'Email not found.' });
 
         const { token, hash } = generateResetToken();
