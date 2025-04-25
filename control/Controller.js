@@ -16,7 +16,7 @@ const generateResetToken = () => {
 // Forgot Password Controller
 export const forgotPassword = async (req, res) => {
     try {
-        const { email } = req.body;
+        const { email , fname } = req.body;
 
         const user = await User.findOne({ email }).select('name email');
 
