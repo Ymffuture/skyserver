@@ -19,6 +19,7 @@ export const forgotPassword = async (req, res) => {
         const { email , fname } = req.body;
 
         const user = await User.findOne({ email }).select('name email');
+        const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
 
         if (!user) return res.status(400).json({ message: 'Email not found.' });
 
@@ -54,7 +55,7 @@ export const forgotPassword = async (req, res) => {
           </tr>
           <tr>
             <td style="padding: 30px; color: #333;">
-                <p style="font-size: 16px;">Hi, ${user.name || 'there'},</p>
+                <p style="font-size: 16px;">Hi, ${capitalize(fname) || 'there'},</p>
               <p style="font-size: 16px;">We received a request to reset your password. Click the button below to proceed. This link will expire in <strong>5 minutes</strong>.</p>
               <div style="text-align: center; margin: 30px 0;">
                 <a href="${resetLink}" target="_blank"
