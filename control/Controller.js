@@ -72,7 +72,7 @@ export const forgotPassword = async (req, res) => {
             </tr>
             <tr>
               <td style="padding: 30px; color: #333;">
-                <p style="font-size: 16px;">Hi, ${capitalize(fname) || 'there'},</p>
+                <p style="font-size: 16px;">Hi, ${fname  || 'there'},</p>
                 <p style="font-size: 16px;">We received a request to reset your password. Click the button below. This link expires in <strong>5 minutes</strong>.</p>
                 <div style="text-align: center; margin: 30px 0;">
                   <a href="${resetLink}" target="_blank" style="padding: 12px 30px; background-color: #1E90FF; color: white; font-weight: bold; border-radius: 50px; text-decoration: none;">
