@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: function () { return !this.googleId; },
       minlength: [6, "Minimum 6 chars"],
+      select: false,
     },
     googleId: { type: String, unique: true, sparse: true },
     displayName: { type: String, trim: true },
