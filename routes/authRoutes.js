@@ -38,9 +38,9 @@ router.post("/user-home-page/sign-up", async (req, res) => {
 
 // Sign-in
 router.post("/user-home-page/sign-in", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, fname} = req.body;
   try {
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ error: "Invalid creds" });
     const match = await user.comparePassword(password);
     if (!match) return res.status(400).json({ error: "Invalid creds" });
