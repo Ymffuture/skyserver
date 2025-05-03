@@ -38,18 +38,34 @@ router.post("/user-home-page/sign-up", async (req, res) => {
 
 // Sign-in
 router.post("/user-home-page/sign-in", async (req, res) => {
-  const { email, password, fname} = req.body;
+  const { email, password } = req.body;
+
+  // Validate input
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required." });
+  }
+
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ error: "Invalid creds" });
-    const match = await user.comparePassword(password);
-    if (!match) return res.status(400).json({ error: "Invalid creds" });
+    if (!user || !user.password) {
+      return res.status(400).json({ error: "Invalid credentials." });
+    }
+
+    // Use bcrypt.compare directly (if no schema method exists)
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(400).json({ error: "Invalid credentials." });
+    }
+
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "2h" });
+
     res.status(200).json({ message: "Login successful", token });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Login error:", err);
+    res.status(500).json({ error: "Server error. Please try again." });
   }
 });
+
 
 // Subscribe
 router.post("/subscribe", async (req, res) => {
