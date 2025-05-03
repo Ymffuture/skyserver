@@ -16,7 +16,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: function () { return !this.googleId; },
       minlength: [6, "Minimum 6 chars"],
-      select: false,
     },
     googleId: { type: String, unique: true, sparse: true },
     displayName: { type: String, trim: true },
@@ -29,8 +28,12 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
+  try {
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
 userSchema.methods.comparePassword = function (candidate) {
